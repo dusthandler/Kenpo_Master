@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenpo Master - Dojo Virtual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tus estilos CSS existentes */
+        :root {
+            --primary: #2A4365;
+            --secondary: #C53030;
+            --accent: #E69D3E;
+            --light: #F7FAFC;
+            --dark: #1A202C;
+            --success: #38A169;
+            --warning: #DD6B20;
+            --danger: #E53E3E;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Header */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .app-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Navigation */
+        .app-nav {
+            width: 280px;
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 90;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 5rem 1rem 1rem;
+            overflow-y: auto;
+        }
+        
+        .app-nav.open {
+            transform: translateX(0);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(42, 67, 101, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-item i {
+            margin-right: 1rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .app-main {
+            flex: 1;
+            padding: 6rem 2rem 2rem;
+            transition: margin-left 0.3s;
+        }
+        
+        /* Technique Cards */
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .technique-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            position: relative;
+            height: 180px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .card-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .belt-indicator {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .difficulty {
+            display: flex;
+            gap: 0.3rem;
+        }
+        
+        .difficulty i {
+            color: var(--accent);
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: #1E3A8A;
+        }
+        
+        .btn-outline {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Detail View */
+        .detail-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            background: none;
+            border: none;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+        
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-title {
+            font-size: 2rem;
+            color: var(--primary);
+            font-family: 'Bebas Neue', cursive;
+            letter-spacing: 1px;
+        }
+        
+        .detail-meta {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .steps-container ol {
+            padding-left: 1.5rem;
+        }
+        
+        .steps-container li {
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+        }
+
+        /* Nuevos estilos para variaciones */
+        .variations-container {
+            margin-top: 2rem;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .variation-item {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            list-style-type: none;
+            margin-left: -1.5rem;
+        }
+        
+        .variation-item:hover {
+            background-color: rgba(42, 67, 101, 0.1);
+            color: var(--primary);
+        }
+        
+        /* Calendar Styles */
+        .calendar-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-header {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .calendar-day {
+            border: 1px solid #eee;
+            padding: 0.5rem;
+            min-height: 100px;
+            position: relative;
+        }
+
+        .time-slot {
+            background: var(--light);
+            border: 1px solid #ddd;
+            padding: 0.3rem;
+            margin: 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .time-slot.available {
+            background: #e8f5e9;
+            border-color: var(--success);
+        }
+
+        .time-slot.booked {
+            background: #ffebee;
+            border-color: var(--danger);
+            cursor: not-allowed;
+        }
+
+        .class-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .class-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .class-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .class-info {
+            flex: 1;
+        }
+
+        .class-price {
+            font-size: 1.2rem;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: normal;
+        }
+        
+        /* Section Titles */
+        .section-title {
+            font-family: 'Bebas Neue', cursive;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Progress Section Styles */
+        .belt-progress-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .belt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .belt-header:hover {
+            background: #f0f4f8;
+        }
+        
+        .belt-title {
+            font-family: 'Bebas Neue', cursive;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .belt-percentage {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .technique-list {
+            margin-top: 1rem;
+        }
+        
+        .technique-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .technique-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .technique-item.completed {
+            background: #f0fff4;
+            border-left: 4px solid var(--success);
+        }
+        
+        .technique-checkbox {
+            margin-right: 1rem;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .technique-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        
+        /* Profile Section */
+        .profile-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .profile-pic-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (min-width: 992px) {
+            .app-nav {
+                transform: translateX(0);
+            }
+            
+            .app-main {
+                margin-left: 280px;
+            }
+            
+            .menu-toggle {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .detail-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .class-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .app-main {
+                padding: 6rem 1rem 1rem;
+            }
+            
+            .belt-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="app-title">
+                <i class="fas fa-fist-raised"></i> Kenpo Master
+            </h1>
+            <div id="profileBtn">
+                <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+            </div>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="app-nav" id="appNav">
+            <div class="nav-item active" data-section="home">
+                <i class="fas fa-home"></i> Inicio
+            </div>
+            <div class="nav-item" data-section="techniques">
+                <i class="fas fa-book-open"></i> Técnicas
+            </div>
+            <div class="nav-item" data-section="forms">
+                <i class="fas fa-project-diagram"></i> Formas
+            </div>
+            <div class="nav-item" data-section="training">
+                <i class="fas fa-graduation-cap"></i> Entrenamiento
+            </div>
+            <div class="nav-item" data-section="teachers">
+                <i class="fas fa-chalkboard-teacher"></i> Clases con Maestros
+            </div>
+            <div class="nav-item" data-section="store">
+                <i class="fas fa-store"></i> Tienda de Clases
+            </div>
+            <div class="nav-item" data-section="events">
+                <i class="fas fa-calendar-alt"></i> Eventos
+            </div>
+            <div class="nav-item" data-section="progress">
+                <i class="fas fa-trophy"></i> Mi Progreso
+            </div>
+            <div class="nav-item" data-section="profile">
+                <i class="fas fa-user"></i> Mi Perfil
+            </div>
+            
+            <div style="margin-top: 2rem; padding: 1rem; border-top: 1px solid #eee;">
+                <h3 style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">MI PROGRESO</h3>
+                <div style="background: #f5f5f5; border-radius: 10px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span id="sidebarBelt">Cinturón Amarillo</span>
+                        <span id="sidebarProgress">45%</span>
+                    </div>
+                    <div style="height: 8px; background: #e0e0e0; border-radius: 4px;">
+                        <div id="sidebarProgressBar" style="width: 45%; height: 100%; background: var(--accent); border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="app-main" id="appMain">
+            <!-- Home Section -->
+            <div id="homeSection" class="section">
+                <h2 class="section-title">Bienvenido al Dojo Virtual</h2>
+                <p class="section-subtitle">Tu centro de entrenamiento de Kenpo Karate</p>
+                
+                <div class="techniques-grid">
+                    <div class="technique-card" onclick="showSection('techniques')">
+                        <div class="card-header">
+                            <i class="fas fa-book-open" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Técnicas</h3>
+                            <p class="card-description">Programa completo de técnicas organizadas por cinturón</p>
+                            <div class="card-footer">
+                                <button class="btn">Explorar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card" onclick="showSection('teachers')">
+                        <div class="card-header">
+                            <i class="fas fa-chalkboard-teacher" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Clases con Maestros</h3>
+                            <p class="card-description">Aprende directamente de nuestros maestros certificados</p>
+                            <div class="card-footer">
+                                <button class="btn">Ver maestros</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card" onclick="showSection('training')">
+                        <div class="card-header">
+                            <i class="fas fa-graduation-cap" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Programas de Entrenamiento</h3>
+                            <p class="card-description">Rutinas personalizadas según tu nivel</p>
+                            <div class="card-footer">
+                                <button class="btn">Comenzar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Techniques Section -->
+            <div id="techniquesSection" class="section" style="display: none;">
+                <h2 class="section-title">Técnicas Disponibles</h2>
+                <p class="section-subtitle">Selecciona una técnica para ver detalles y tutoriales</p>
+                
+                <div class="techniques-grid">
+                    <!-- Technique Card 1 -->
+                    <div class="technique-card" onclick="showDetail(1)">
+                        <div class="card-header">
+                            <span class="belt-indicator">Blanco</span>
+                            <i class="fas fa-user-ninja" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">ESPADA RETRASADA (Delayed Sword)</h3>
+                            <p class="card-description">Técnica básica para liberarse de un agarre frontal con contraataque.</p>
+                            <div class="card-footer">
+                                <div class="difficulty">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <button class="btn">Ver técnica</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Technique Card 2 -->
+                    <div class="technique-card" onclick="showDetail(2)">
+                        <div class="card-header">
+                            <span class="belt-indicator">Naranja</span>
+                            <i class="fas fa-user-ninja" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">MAZAS ALTERNAS (Alternating Maces)</h3>
+                            <p class="card-description">Desvio y contraataque contra un empujón de dos manos frontal.</p>
+                            <div class="card-footer">
+                                <div class="difficulty">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <button class="btn">Ver técnica</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Technique Card 3 -->
+                    <div class="technique-card" onclick="showDetail(3)">
+                        <div class="card-header">
+                            <span class="belt-indicator">Verde</span>
+                            <i class="fas fa-user-ninja" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">ESPADA DE DESTRUCCIÓN (Sword of Destruction)</h3>
+                            <p class="card-description">Bloqueo y contraataque contra gancho izquierdo.</p>
+                            <div class="card-footer">
+                                <div class="difficulty">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <button class="btn">Ver técnica</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technique Detail View -->
+            <div id="detailView" style="display: none;">
+                <div class="detail-container">
+                    <button class="back-btn" onclick="showSection('techniques')">
+                        <i class="fas fa-arrow-left"></i> Volver a técnicas
+                    </button>
+                    
+                    <div class="detail-header">
+                        <h2 class="detail-title" id="detailTitle">Defensa contra agarre frontal</h2>
+                        <div class="detail-meta">
+                            <span class="belt-indicator" id="detailBelt">Amarillo</span>
+                            <div class="difficulty" id="detailDifficulty">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-content">
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Video demostración</h3>
+                            <div class="video-container">
+                                <iframe id="techniqueVideo" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            
+                            <div style="margin-top: 1.5rem;">
+                                <h3 style="margin-bottom: 1rem; color: var(--primary);">Consejos del maestro</h3>
+                                <p id="detailTips">Mantén tu centro de gravedad bajo y usa la fuerza de tus piernas para generar potencia en el contraataque. La velocidad es importante, pero la precisión lo es más.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="steps-container">
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Pasos detallados</h3>
+                            <ol id="detailSteps">
+                                <li>Posición inicial: pies separados al ancho de hombros, rodillas ligeramente flexionadas</li>
+                                <li>Al sentir el agarre, gira tus muñecas hacia dentro para romper el agarre</li>
+                                <li>Da un paso atrás con el pie derecho mientras llevas las manos hacia arriba</li>
+                                <li>Golpea con el codo derecho al punto vulnerable del oponente</li>
+                                <li>Finaliza con una palma al mentón seguida de una rodilla al estómago</li>
+                            </ol>
+                            
+                            <div class="variations-container">
+                                <h3 style="margin-bottom: 0.5rem; color: var(--primary);">Variaciones</h3>
+                                <ul id="variationsList">
+                                    <!-- Las variaciones se cargarán dinámicamente -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Teachers Section -->
+            <div id="teachersSection" class="section" style="display: none;">
+                <h2 class="section-title">Clases con Maestros Certificados</h2>
+                <p class="section-subtitle">Aprende directamente de los mejores instructores de Kenpo Karate</p>
+                
+                <div class="class-card" onclick="showTeacherDetail(1)">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Maestro">
+                    <div class="class-info">
+                        <h3>Sensei Carlos Mendoza</h3>
+                        <p>7mo Dan - Especialista en defensa personal</p>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="class-price">
+                        $25/h
+                    </div>
+                </div>
+
+                <div class="class-card" onclick="showTeacherDetail(2)">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Maestra">
+                    <div class="class-info">
+                        <h3>Shihan Ana Torres</h3>
+                        <p>5to Dan - Expertia en competición</p>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <div class="class-price">
+                        $30/h
+                    </div>
+                </div>
+                
+                <div class="class-card" onclick="showTeacherDetail(3)">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Maestro">
+                    <div class="class-info">
+                        <h3>Kyoshi Javier Rojas</h3>
+                        <p>8vo Dan - Fundador del estilo Kenpo Ryu</p>
+                        <div class="difficulty">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="class-price">
+                        $50/h
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Teacher Detail View -->
+            <div id="teacherDetailView" style="display: none;">
+                <div class="detail-container">
+                    <button class="back-btn" onclick="showSection('teachers')">
+                        <i class="fas fa-arrow-left"></i> Volver a maestros
+                    </button>
+                    
+                    <div class="detail-header">
+                        <h2 class="detail-title" id="teacherName">Sensei Carlos Mendoza</h2>
+                        <div class="detail-meta">
+                            <span class="belt-indicator" id="teacherRank">7mo Dan</span>
+                            <div class="difficulty" id="teacherRating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-content">
+                        <div>
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Especialidades</h3>
+                            <ul style="padding-left: 1.5rem; margin-bottom: 1rem;" id="teacherSpecialties">
+                                <li>Defensa personal urbana</li>
+                                <li>Técnicas de desarme</li>
+                                <li>Kenpo tradicional</li>
+                            </ul>
+                            
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Biografía</h3>
+                            <p id="teacherBio">Con más de 25 años de experiencia en artes marciales, el Sensei Mendoza ha entrenado a campeones nacionales e internacionales. Fundador del sistema de defensa personal "Urban Kenpo".</p>
+                        </div>
+                        
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Información de Clases</h3>
+                            <div style="margin-bottom: 1.5rem;">
+                                <p><strong>Precio:</strong> <span id="teacherPrice">$25</span> por hora</p>
+                                <p><strong>Modalidades:</strong> Presencial/Virtual</p>
+                                <p><strong>Idiomas:</strong> Español, Inglés</p>
+                            </div>
+                            
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Horarios Disponibles</h3>
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                                <p>Lunes a Viernes: 9:00 - 12:00 / 16:00 - 20:00</p>
+                                <p>Sábados: 10:00 - 14:00</p>
+                            </div>
+                            
+                            <button class="btn" style="margin-top: 1.5rem; width: 100%;" onclick="showSection('store')">
+                                <i class="fas fa-calendar-alt"></i> Reservar Clase
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Store Section -->
+            <div id="storeSection" class="section" style="display: none;">
+                <h2 class="section-title">Agenda tu Clase</h2>
+                <p class="section-subtitle">Selecciona fecha y hora para tu clase privada</p>
+                
+                <div class="calendar-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3>Junio 2023</h3>
+                        <div>
+                            <button class="btn-outline" style="padding: 0.3rem 0.6rem;">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn-outline" style="padding: 0.3rem 0.6rem;">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-grid">
+                        <div class="calendar-header">Lun</div>
+                        <div class="calendar-header">Mar</div>
+                        <div class="calendar-header">Mié</div>
+                        <div class="calendar-header">Jue</div>
+                        <div class="calendar-header">Vie</div>
+                        <div class="calendar-header">Sáb</div>
+                        <div class="calendar-header">Dom</div>
+                        
+                        <!-- Semana 1 -->
+                        <div class="calendar-day">
+                            <div class="time-slot available" onclick="showBookingModal('Lunes 5, 09:00')">09:00</div>
+                            <div class="time-slot available" onclick="showBookingModal('Lunes 5, 10:00')">10:00</div>
+                            <div class="time-slot booked">11:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="time-slot available" onclick="showBookingModal('Martes 6, 09:00')">09:00</div>
+                            <div class="time-slot available" onclick="showBookingModal('Martes 6, 16:00')">16:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="time-slot available" onclick="showBookingModal('Miércoles 7, 17:00')">17:00</div>
+                            <div class="time-slot available" onclick="showBookingModal('Miércoles 7, 18:00')">18:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="time-slot booked">09:00</div>
+                            <div class="time-slot available" onclick="showBookingModal('Jueves 8, 10:00')">10:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="time-slot available" onclick="showBookingModal('Viernes 9, 16:00')">16:00</div>
+                            <div class="time-slot available" onclick="showBookingModal('Viernes 9, 17:00')">17:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="time-slot available" onclick="showBookingModal('Sábado 10, 10:00')">10:00</div>
+                            <div class="time-slot available" onclick="showBookingModal('Sábado 10, 11:00')">11:00</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="time-slot booked">--</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 20px; height: 20px; background: #e8f5e9; border: 1px solid var(--success);"></div>
+                            Disponible
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 20px; height: 20px; background: #ffebee; border: 1px solid var(--danger);"></div>
+                            Reservado
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Training Section -->
+            <div id="trainingSection" class="section" style="display: none;">
+                <h2 class="section-title">Programas de Entrenamiento</h2>
+                <p class="section-subtitle">Selecciona un programa según tu nivel y objetivos</p>
+                
+                <div class="techniques-grid">
+                    <div class="technique-card">
+                        <div class="card-header" style="background: linear-gradient(135deg, #f6e05e, #d69e2e);">
+                            <span class="belt-indicator" style="background-color: #d69e2e;">Principiante</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Fundamentos del Kenpo</h3>
+                            <p class="card-description">4 semanas dominando las bases. Ideal para cinturones blancos y amarillos.</p>
+                            <div class="card-footer">
+                                <button class="btn">Comenzar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="card-header" style="background: linear-gradient(135deg, #f6ad55, #dd6b20);">
+                            <span class="belt-indicator" style="background-color: #dd6b20;">Intermedio</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Técnicas de Combate</h3>
+                            <p class="card-description">6 semanas mejorando tu fluidez y potencia. Para cinturones naranja a verde.</p>
+                            <div class="card-footer">
+                                <button class="btn">Comenzar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="card-header" style="background: linear-gradient(135deg, #f56565, #c53030);">
+                            <span class="belt-indicator" style="background-color: #c53030;">Avanzado</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Defensa Personal Avanzada</h3>
+                            <p class="card-description">8 semanas de técnicas callejeras efectivas. Para cinturones azules en adelante.</p>
+                            <div class="card-footer">
+                                <button class="btn">Comenzar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Forms Section -->
+            <div id="formsSection" class="section" style="display: none;">
+                <h2 class="section-title">Formas (Katas)</h2>
+                <p class="section-subtitle">Practica las formas tradicionales del Kenpo Karate</p>
+                
+                <div class="techniques-grid">
+                    <div class="technique-card">
+                        <div class="card-header">
+                            <span class="belt-indicator">Amarillo</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Short Form 1</h3>
+                            <p class="card-description">Forma básica que introduce los movimientos fundamentales.</p>
+                            <div class="card-footer">
+                                <button class="btn">Practicar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="card-header">
+                            <span class="belt-indicator">Naranja</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Short Form 2</h3>
+                            <p class="card-description">Introducción a cambios de dirección y nuevos bloqueos.</p>
+                            <div class="card-footer">
+                                <button class="btn">Practicar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="card-header">
+                            <span class="belt-indicator">Verde</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Long Form 1</h3>
+                            <p class="card-description">Forma extendida que combina técnicas de varios niveles.</p>
+                            <div class="card-footer">
+                                <button class="btn">Practicar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Events Section -->
+            <div id="eventsSection" class="section" style="display: none;">
+                <h2 class="section-title">Próximos Eventos</h2>
+                <p class="section-subtitle">Participa en seminarios, torneos y actividades especiales</p>
+                
+                <div class="techniques-grid">
+                    <div class="technique-card">
+                        <div class="card-header" style="background: linear-gradient(135deg, #68d391, #38a169);">
+                            <span class="belt-indicator" style="background-color: #38a169;">15 Jun</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Seminario de Defensa Personal</h3>
+                            <p class="card-description">Taller intensivo de 4 horas con el Shihan Torres.</p>
+                            <div class="card-footer">
+                                <button class="btn">Más info</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="card-header" style="background: linear-gradient(135deg, #63b3ed, #3182ce);">
+                            <span class="belt-indicator" style="background-color: #3182ce;">30 Jun</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Torneo Regional</h3>
+                            <p class="card-description">Competencia abierta para cinturones amarillos a morados.</p>
+                            <div class="card-footer">
+                                <button class="btn">Inscribirse</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technique-card">
+                        <div class="card-header" style="background: linear-gradient(135deg, #b794f4, #805ad5);">
+                            <span class="belt-indicator" style="background-color: #805ad5;">15 Jul</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Examen de Grados</h3>
+                            <p class="card-description">Oportunidad para ascender al siguiente cinturón.</p>
+                            <div class="card-footer">
+                                <button class="btn">Preparación</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Section -->
+            <div id="progressSection" class="section" style="display: none;">
+                <div class="belt-progress-container">
+                    <h2 class="section-title">Mi Progreso</h2>
+                    <p class="section-subtitle">Sigue tu avance en el camino del Kenpo</p>
+                    
+                    <!-- Cinturón Amarillo -->
+                    <div class="belt-progress">
+                        <div class="belt-header" onclick="toggleTechniqueList('amarillo')">
+                            <div class="belt-title">Cinturón Amarillo</div>
+                            <div class="belt-percentage" id="amarilloPercentage">0%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="amarilloProgress"></div>
+                        </div>
+                        <div class="technique-list" id="amarilloList"></div>
+                    </div>
+
+                    <!-- Cinturón Naranja -->
+                    <div class="belt-progress">
+                        <div class="belt-header" onclick="toggleTechniqueList('naranja')">
+                            <div class="belt-title">Cinturón Naranja</div>
+                            <div class="belt-percentage" id="naranjaPercentage">0%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="naranjaProgress"></div>
+                        </div>
+                        <div class="technique-list" id="naranjaList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Section -->
+            <div id="profileSection" class="section" style="display: none;">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div style="position: relative;">
+                            <img src="https://via.placeholder.com/150" alt="Foto de perfil" class="profile-pic" id="profilePicture">
+                            <div class="profile-pic-edit" onclick="document.getElementById('profilePictureInput').click()">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <input type="file" id="profilePictureInput" hidden>
+                        </div>
+                        <div>
+                            <h2 id="profileName" style="font-family: 'Bebas Neue'; color: var(--primary);">Nombre Usuario</h2>
+                            <p>Cinturón: <span id="profileBelt">Amarillo</span></p>
+                            <p>Dojo: <span id="profileDojo">Central</span></p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <label>Nombre completo</label>
+                            <input type="text" id="nameInput" class="form-input" value="Nombre Usuario">
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label>Cinturón actual</label>
+                            <select id="beltSelect" class="form-input">
+                                <option value="Amarillo">Amarillo</option>
+                                <option value="Naranja">Naranja</option>
+                                <option value="Morado">Morado</option>
+                                <option value="Azul">Azul</option>
+                                <option value="Verde">Verde</option>
+                                <option value="Marrón">Marrón</option>
+                                <option value="Negro">Negro</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label>Dojo</label>
+                            <input type="text" id="dojoInput" class="form-input" value="Central">
+                        </div>
+                        
+                        <button class="btn" onclick="saveProfile()">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 1rem;">Reservar clase a las <span id="selectedTime">Lunes 5, 09:00</span></h3>
+            <form id="bookingForm" onsubmit="handleBooking(event)">
+                <div class="form-group">
+                    <label>Selecciona maestro:</label>
+                    <select required>
+                        <option value="">-- Selecciona --</option>
+                        <option value="1">Sensei Carlos Mendoza ($25/h)</option>
+                        <option value="2">Shihan Ana Torres ($30/h)</option>
+                        <option value="3">Kyoshi Javier Rojas ($50/h)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Selecciona tipo:</label>
+                    <select required>
+                        <option value="virtual">Clase Virtual</option>
+                        <option value="presencial">Clase Presencial (Dojo Central)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Duración:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="duration" value="1" required checked> 1 hora</label>
+                        <label><input type="radio" name="duration" value="1.5"> 1.5 horas</label>
+                        <label><input type="radio" name="duration" value="2"> 2 horas</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tu nombre completo:</label>
+                    <input type="text" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Notas adicionales (opcional):</label>
+                    <textarea rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn-outline" onclick="closeModal()" style="flex: 1;">Cancelar</button>
+                    <button type="submit" class="btn" style="flex: 1;">
+                        <i class="fas fa-calendar-check"></i> Reservar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Datos del usuario
+        let userProfile = {
+            name: "Nombre Usuario",
+            belt: "Amarillo",
+            dojo: "Central",
+            profilePic: "https://via.placeholder.com/150",
+            completed: []
+        };
+
+        // Técnicas por cinturón
+        const beltTechniques = {
+            amarillo: [
+                "ESPADA RETRASADA (Delayed Sword)",
+                "MAZAS ALTERNAS (Alternating Maces)",
+                "ESPADA DE DESTRUCCIÓN (Sword of Destruction)",
+                "MARTILLO DESVIANTE (Deflecting Hammer)",
+                "RAMITAS CAPTURADAS (Captured Twigs)",
+                "EL ABRAZO DE LA MUERTE (The Grasp of Death)",
+                "CHEQUEANDO LA TORMENTA (Checking the Storm)",
+                "MAZA DE AGRESIÓN (Mace of Aggression)",
+                "MAZA ATACANTE (Attacking Mace)",
+                "ESPADA Y MARTILLO (Sword and Hammer)",
+                "RAMAS AGRESIVAS (Aggressive Twins)",
+                "DESPEDIDA INTELECTUAL (Intellectual Departure)",
+                "DESPRENDIENDO LA RAMA (Spreading Branch)",
+                "SET: Bloqueos 1º",
+                "FORMA: 1ª Forma Corta"
+            ],
+            naranja: [
+                "PLUMAS EMPUÑADAS (Clutching Feathers)",
+                "SALUDO DISPARADO (Triggered Salute)",
+                "DANZA DE LA MUERTE (Dance of Death)",
+                "GARRAS ENFADADAS (Angry Panthers)",
+                "GARRAS PROTECTORAS (Protecting Fans)",
+                "ALAS DE ÁGUILA (Eagle Wings)",
+                "GARRAS QUE SE ENGANCHAN (Grasp of Death)",
+                "ESPADA Y ESCUDO (Sword and Shield)",
+                "TORMENTA DE GARRAS (Clawing Storm)",
+                "SET: Bloqueos 2º",
+                "FORMA: 2ª Forma Corta"
+            ]
+        };
+
+        // Technique detail data con videos específicos y variaciones
+        const techniques = {
+            1: {
+                title: "ESPADA RETRASADA (Delayed Sword)",
+                belt: "Blanco",
+                difficulty: 2,
+                videoId: "pIZaONmO02Q",
+                tips: "Mantén tu centro de gravedad bajo y usa la fuerza de tus piernas para generar potencia en el contraataque. La velocidad es importante, pero la precisión lo es más.",
+                steps: [
+                    "Posición inicial: pies separados al ancho de hombros, rodillas ligeramente flexionadas",
+                    "Al sentir el agarre, sujeta su mano firmemente con tu mano izquierda",
+                    "Da un paso atrás con el pie izquierdo",
+                    "Golpea con martillo derecho al brazo",
+                    "Finaliza con una patada frontal a genitales y una espada al cuello"
+                ],
+                variations: [
+                    { 
+                        name: "Contra agarre doble", 
+                        id: 4,
+                        description: "Variante para cuando el oponente te agarra con ambas manos"
+                    },
+                    { 
+                        name: "Con ataque a puntos de presión", 
+                        id: 5,
+                        description: "Versión que incluye golpes a puntos vitales"
+                    },
+                    { 
+                        name: "Versión avanzada con barrido", 
+                        id: 6,
+                        description: "Incluye barrido de pierna para derribar al oponente"
+                    }
+                ]
+            },
+            2: {
+                title: "MAZAS ALTERNAS (Alternating Maces)",
+                belt: "Naranja",
+                difficulty: 2.5,
+                videoId: "dQw4w9WgXcQ",
+                tips: "El tiempo es crucial. Practica el bloqueo hasta que sea instintivo. Recuerda chequear los brazos desviados con tu mano que no está golpeando.",
+                steps: [
+                    "Posición de guardia con las manos protegiendo el rostro",
+                    "Con la mano izquierda, desvía el golpe hacia afuera en un ángulo de 45 grados",
+                    "Al mismo tiempo, golpea con la mano derecha a la mandíbula",
+                    "Sigue con una patada baja a la rodilla",
+                    "Termina con un codazo descendente"
+                ],
+                variations: [
+                    { 
+                        name: "Versión con rodillazo", 
+                        id: 7,
+                        description: "Incluye rodillazo al final en lugar de codazo"
+                    },
+                    { 
+                        name: "Defensa contra doble empujón", 
+                        id: 8,
+                        description: "Adaptación para cuando el oponente empuja con ambas manos"
+                    }
+                ]
+            },
+            3: {
+                title: "ESPADA DE DESTRUCCIÓN (Sword of Destruction)",
+                belt: "Verde",
+                difficulty: 3,
+                videoId: "otFDG6W53I8",
+                tips: "Se firme en el bloqueo. No bloquees en el bíceps, sino en el antebrazo. Controla la distancia para tu contraataque.",
+                steps: [
+                    "Posición lateral para presentar un blanco más pequeño",
+                    "Usa ambos brazos para desviar la patada hacia un lado",
+                    "Aprovecha el impulso para agarrar el pie y desequilibrar",
+                    "Contraataca con una patada circular a la pierna de apoyo",
+                    "Finaliza con una llave al tobillo si es necesario"
+                ],
+                variations: [
+                    { 
+                        name: "Con proyección", 
+                        id: 9,
+                        description: "Incluye proyección del oponente al suelo"
+                    },
+                    { 
+                        name: "Versión con armadura", 
+                        id: 10,
+                        description: "Adaptación para cuando el oponente lleva protecciones"
+                    }
+                ]
+            },
+            // Técnicas adicionales para las variaciones
+            4: {
+                title: "ESPADA RETRASADA - Contra agarre doble",
+                belt: "Blanco",
+                difficulty: 2.5,
+                videoId: "pIZaONmO02Q",
+                tips: "Usa más fuerza en la rotación de muñecas para romper ambos agarres simultáneamente.",
+                steps: [
+                    "Posición inicial estable",
+                    "Rotación doble de muñecas hacia dentro",
+                    "Paso atrás más pronunciado",
+                    "Contraataque con ambos codos",
+                    "Finalización con doble palma"
+                ],
+                variations: []
+            },
+            5: {
+                title: "ESPADA RETRASADA - Puntos de presión",
+                belt: "Blanco",
+                difficulty: 3,
+                videoId: "pIZaONmO02Q",
+                tips: "Enfócate en la precisión más que en la fuerza. Los puntos de presión requieren exactitud.",
+                steps: [
+                    "Posición inicial",
+                    "Rompe el agarre como en la versión básica",
+                    "Golpea al punto LI4 entre pulgar e índice",
+                    "Sigue con golpe al punto ST9 en el cuello",
+                    "Finaliza con rodilla al punto CV6"
+                ],
+                variations: []
+            },
+            6: {
+                title: "ESPADA RETRASADA - Con barrido",
+                belt: "Amarillo",
+                difficulty: 3,
+                videoId: "pIZaONmO02Q",
+                tips: "Coordina bien el barrido con el desequilibrio del oponente. El momento es clave.",
+                steps: [
+                    "Posición inicial",
+                    "Rompe el agarre",
+                    "Golpea al mentón para desequilibrar",
+                    "Barrido circular a la pierna de apoyo",
+                    "Control en el suelo"
+                ],
+                variations: []
+            },
+            7: {
+                title: "MAZAS ALTERNAS - Con rodillazo",
+                belt: "Naranja",
+                difficulty: 3,
+                videoId: "dQw4w9WgXcQ",
+                tips: "Aprovecha el agarre cercano para aplicar el rodillazo con máxima potencia.",
+                steps: [
+                    "Posición de guardia",
+                    "Bloqueo y golpe inicial",
+                    "Agarrar al oponente por la nuca",
+                    "Rodillazo al estómago o cabeza",
+                    "Empujón final"
+                ],
+                variations: []
+            },
+            8: {
+                title: "MAZAS ALTERNAS - Contra doble empujón",
+                belt: "Naranja",
+                difficulty: 3,
+                videoId: "dQw4w9WgXcQ",
+                tips: "Usa el peso del oponente en su contra cuando empuja con ambas manos.",
+                steps: [
+                    "Posición más estable",
+                    "Doble bloqueo circular",
+                    "Contraataque con codazo giratorio",
+                    "Patada a la rodilla",
+                    "Finalización con palma doble"
+                ],
+                variations: []
+            },
+            9: {
+                title: "ESPADA DE DESTRUCCIÓN - Con proyección",
+                belt: "Verde",
+                difficulty: 3.5,
+                videoId: "otFDG6W53I8",
+                tips: "La proyección requiere control perfecto del centro de gravedad del oponente.",
+                steps: [
+                    "Posición lateral",
+                    "Desviar la patada",
+                    "Agarrar la pierna y hombro",
+                    "Girar y proyectar",
+                    "Control en el suelo"
+                ],
+                variations: []
+            },
+            10: {
+                title: "ESPADA DE DESTRUCCIÓN - Con armadura",
+                belt: "Verde",
+                difficulty: 3.5,
+                videoId: "otFDG6W53I8",
+                tips: "Enfócate en puntos débiles de la armadura como articulaciones y áreas menos protegidas.",
+                steps: [
+                    "Posición lateral",
+                    "Desviar hacia zonas desprotegidas",
+                    "Contraataque a axilas o ingle",
+                    "Uso de palmas en lugar de puños",
+                    "Finalización con llave"
+                ],
+                variations: []
+            }
+        };
+        
+        // Teachers data
+        const teachers = {
+            1: {
+                name: "Sensei Carlos Mendoza",
+                rank: "7mo Dan",
+                rating: 4,
+                specialties: [
+                    "Defensa personal urbana",
+                    "Técnicas de desarme",
+                    "Kenpo tradicional"
+                ],
+                bio: "Con más de 25 años de experiencia en artes marciales, el Sensei Mendoza ha entrenado a campeones nacionales e internacionales. Fundador del sistema de defensa personal 'Urban Kenpo'.",
+                price: "$25",
+                schedule: "Lunes a Viernes: 9:00 - 12:00 / 16:00 - 20:00\nSábados: 10:00 - 14:00",
+                image: "https://randomuser.me/api/portraits/men/32.jpg"
+            },
+            2: {
+                name: "Shihan Ana Torres",
+                rank: "5to Dan",
+                rating: 3.5,
+                specialties: [
+                    "Kenpo deportivo",
+                    "Preparación para competición",
+                    "Técnicas para mujeres"
+                ],
+                bio: "Campeona nacional en 5 ocasiones y medallista panamericana. Especializada en adaptar el Kenpo para competidores y para situaciones reales de defensa personal.",
+                price: "$30",
+                schedule: "Martes y Jueves: 10:00 - 14:00 / 17:00 - 20:00",
+                image: "https://randomuser.me/api/portraits/women/44.jpg"
+            },
+            3: {
+                name: "Kyoshi Javier Rojas",
+                rank: "8vo Dan",
+                rating: 5,
+                specialties: [
+                    "Kenpo tradicional",
+                    "Formas avanzadas",
+                    "Filosofía marcial"
+                ],
+                bio: "Con 40 años de experiencia, el Kyoshi Rojas es uno de los máximos exponentes del Kenpo en Latinoamérica. Fundador del estilo Kenpo Ryu y autor de 3 libros sobre artes marciales.",
+                price: "$50",
+                schedule: "Lunes, Miércoles y Viernes: 8:00 - 11:00",
+                image: "https://randomuser.me/api/portraits/men/75.jpg"
+            }
+        };
+        
+        // Toggle mobile menu
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('appNav').classList.toggle('open');
+        });
+        
+        // Navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all items
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Show corresponding section
+                const sectionId = this.getAttribute('data-section');
+                showSection(sectionId);
+            });
+        });
+
+        // Profile button
+        document.getElementById('profileBtn').addEventListener('click', function() {
+            showSection('profile');
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(navItem => {
+                navItem.classList.remove('active');
+            });
+            document.querySelector('.nav-item[data-section="profile"]').classList.add('active');
+        });
+        
+        // Show section function
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Hide detail views
+            document.getElementById('detailView').style.display = 'none';
+            document.getElementById('teacherDetailView').style.display = 'none';
+            
+            // Show selected section
+            if (sectionId === 'home') {
+                document.getElementById('homeSection').style.display = 'block';
+            } else if (sectionId === 'techniques') {
+                document.getElementById('techniquesSection').style.display = 'block';
+            } else if (sectionId === 'teachers') {
+                document.getElementById('teachersSection').style.display = 'block';
+            } else if (sectionId === 'store') {
+                document.getElementById('storeSection').style.display = 'block';
+            } else if (sectionId === 'training') {
+                document.getElementById('trainingSection').style.display = 'block';
+            } else if (sectionId === 'forms') {
+                document.getElementById('formsSection').style.display = 'block';
+            } else if (sectionId === 'events') {
+                document.getElementById('eventsSection').style.display = 'block';
+            } else if (sectionId === 'progress') {
+                document.getElementById('progressSection').style.display = 'block';
+                renderProgress();
+            } else if (sectionId === 'profile') {
+                document.getElementById('profileSection').style.display = 'block';
+                loadProfile();
+            }
+            
+            // Close menu on mobile
+            if (window.innerWidth < 992) {
+                document.getElementById('appNav').classList.remove('open');
+            }
+        }
+        
+        // Show technique detail
+        function showDetail(id) {
+            const technique = techniques[id];
+            
+            document.getElementById('detailTitle').textContent = technique.title;
+            document.getElementById('detailBelt').textContent = technique.belt;
+            document.getElementById('detailTips').textContent = technique.tips;
+            
+            // Set the correct YouTube video
+            const iframe = document.getElementById('techniqueVideo');
+            iframe.src = `https://www.youtube.com/embed/${technique.videoId}?rel=0&modestbranding=1`;
+            
+            // Update steps
+            const stepsList = document.getElementById('detailSteps');
+            stepsList.innerHTML = '';
+            technique.steps.forEach(step => {
+                const li = document.createElement('li');
+                li.textContent = step;
+                stepsList.appendChild(li);
+            });
+            
+            // Update difficulty stars
+            const starsContainer = document.getElementById('detailDifficulty');
+            starsContainer.innerHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                const star = document.createElement('i');
+                if (i <= Math.floor(technique.difficulty)) {
+                    star.className = 'fas fa-star';
+                } else if (i - 0.5 <= technique.difficulty) {
+                    star.className = 'fas fa-star-half-alt';
+                } else {
+                    star.className = 'far fa-star';
+                }
+                starsContainer.appendChild(star);
+            }
+            
+            // Update variations
+            const variationsList = document.getElementById('variationsList');
+            variationsList.innerHTML = '';
+            
+            if (technique.variations && technique.variations.length > 0) {
+                technique.variations.forEach(variation => {
+                    const li = document.createElement('li');
+                    li.className = 'variation-item';
+                    li.textContent = variation.name;
+                    li.title = variation.description; // Tooltip con la descripción
+                    li.onclick = () => showDetail(variation.id);
+                    variationsList.appendChild(li);
+                });
+            } else {
+                const noVariations = document.createElement('li');
+                noVariations.textContent = "Esta técnica no tiene variaciones registradas";
+                variationsList.appendChild(noVariations);
+            }
+            
+            // Show detail view
+            document.getElementById('techniquesSection').style.display = 'none';
+            document.getElementById('detailView').style.display = 'block';
+        }
+        
+        // Show teacher detail
+        function showTeacherDetail(id) {
+            const teacher = teachers[id];
+            
+            document.getElementById('teacherName').textContent = teacher.name;
+            document.getElementById('teacherRank').textContent = teacher.rank;
+            document.getElementById('teacherPrice').textContent = teacher.price;
+            document.getElementById('teacherBio').textContent = teacher.bio;
+            
+            // Update rating stars
+            const starsContainer = document.getElementById('teacherRating');
+            starsContainer.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('i');
+                if (i <= Math.floor(teacher.rating)) {
+                    star.className = 'fas fa-star';
+                } else if (i - 0.5 <= teacher.rating) {
+                    star.className = 'fas fa-star-half-alt';
+                } else {
+                    star.className = 'far fa-star';
+                }
+                starsContainer.appendChild(star);
+            }
+            
+            // Update specialties
+            const specialtiesList = document.getElementById('teacherSpecialties');
+            specialtiesList.innerHTML = '';
+            teacher.specialties.forEach(specialty => {
+                const li = document.createElement('li');
+                li.textContent = specialty;
+                specialtiesList.appendChild(li);
+            });
+            
+            // Show detail view
+            document.getElementById('teachersSection').style.display = 'none';
+            document.getElementById('teacherDetailView').style.display = 'block';
+        }
+        
+        // Booking modal functions
+        function showBookingModal(time) {
+            document.getElementById('selectedTime').textContent = time;
+            document.getElementById('bookingModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+            alert('¡Clase reservada con éxito! Recibirás un email de confirmación.');
+            closeModal();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if(e.target === this) closeModal();
+        });
+
+        function toggleTechniqueList(belt) {
+            const list = document.getElementById(`${belt}List`);
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function renderProgress() {
+            // Cargar datos guardados
+            const savedData = localStorage.getItem('kenpoProgress');
+            if (savedData) {
+                userProfile = JSON.parse(savedData);
+            }
+
+            // Actualizar perfil en sidebar
+            document.getElementById('sidebarBelt').textContent = `Cinturón ${userProfile.belt}`;
+            document.getElementById('profileName').textContent = userProfile.name;
+            document.getElementById('profileBelt').textContent = userProfile.belt;
+            document.getElementById('profileDojo').textContent = userProfile.dojo;
+            document.getElementById('profilePicture').src = userProfile.profilePic;
+            document.getElementById('nameInput').value = userProfile.name;
+            document.getElementById('beltSelect').value = userProfile.belt;
+            document.getElementById('dojoInput').value = userProfile.dojo;
+
+            // Renderizar progreso para cada cinturón
+            let totalCompleted = 0;
+            let totalTechniques = 0;
+            
+            Object.keys(beltTechniques).forEach(belt => {
+                const completed = beltTechniques[belt].filter(tech => 
+                    userProfile.completed.includes(tech)
+                ).length;
+                
+                const percentage = Math.round((completed / beltTechniques[belt].length) * 100);
+                
+                // Actualizar porcentaje
+                document.getElementById(`${belt}Percentage`).textContent = `${percentage}%`;
+                document.getElementById(`${belt}Progress`).style.width = `${percentage}%`;
+                
+                // Renderizar técnicas
+                const listContainer = document.getElementById(`${belt}List`);
+                listContainer.innerHTML = '';
+                
+                beltTechniques[belt].forEach(tech => {
+                    const isCompleted = userProfile.completed.includes(tech);
+                    const item = document.createElement('div');
+                    item.className = `technique-item ${isCompleted ? 'completed' : ''}`;
+                    item.innerHTML = `
+                        <div class="technique-checkbox ${isCompleted ? 'checked' : ''}">
+                            ${isCompleted ? '✓' : ''}
+                        </div>
+                        <div>${tech}</div>
+                    `;
+                    item.addEventListener('click', () => toggleTechnique(tech, belt));
+                    listContainer.appendChild(item);
+                });
+
+                totalCompleted += completed;
+                totalTechniques += beltTechniques[belt].length;
+            });
+
+            // Actualizar progreso general en sidebar
+            const totalPercentage = Math.round((totalCompleted / totalTechniques) * 100);
+            document.getElementById('sidebarProgress').textContent = `${totalPercentage}%`;
+            document.getElementById('sidebarProgressBar').style.width = `${totalPercentage}%`;
+        }
+
+        function toggleTechnique(technique, belt) {
+            const index = userProfile.completed.indexOf(technique);
+            if (index > -1) {
+                userProfile.completed.splice(index, 1);
+            } else {
+                userProfile.completed.push(technique);
+            }
+            saveProfile();
+        }
+
+        function saveProfile() {
+            userProfile.name = document.getElementById('nameInput').value;
+            userProfile.belt = document.getElementById('beltSelect').value;
+            userProfile.dojo = document.getElementById('dojoInput').value;
+            
+            localStorage.setItem('kenpoProgress', JSON.stringify(userProfile));
+            renderProgress();
+        }
+
+        function loadProfile() {
+            const savedData = localStorage.getItem('kenpoProgress');
+            if (savedData) {
+                userProfile = JSON.parse(savedData);
+                document.getElementById('profileName').textContent = userProfile.name;
+                document.getElementById('profileBelt').textContent = userProfile.belt;
+                document.getElementById('profileDojo').textContent = userProfile.dojo;
+                document.getElementById('profilePicture').src = userProfile.profilePic;
+                document.getElementById('nameInput').value = userProfile.name;
+                document.getElementById('beltSelect').value = userProfile.belt;
+                document.getElementById('dojoInput').value = userProfile.dojo;
+            }
+        }
+
+        // Cambiar imagen de perfil
+        document.getElementById('profilePictureInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    userProfile.profilePic = event.target.result;
+                    document.getElementById('profilePicture').src = event.target.result;
+                    saveProfile();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Initialize with home section
+        showSection('home');
+        loadProfile();
+        renderProgress();
+    </script>
+</body>
+</html>
